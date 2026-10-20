@@ -68,6 +68,8 @@ cases.push(
     question: "青岚会收购竞争对手吗？",
     grounding: ["none"],
     composer: "refusal",
+    includes: ["覆盖率"],
+    excludes: ["相关度不够", "会收购"],
   },
   {
     docId: "night",

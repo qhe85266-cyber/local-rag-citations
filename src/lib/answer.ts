@@ -125,9 +125,12 @@ function extractiveAnswer(
   return { text, citations };
 }
 
-function refusalText(topScore: number): string {
+function refusalText(topScore: number, blockedByCoverage: boolean): string {
   if (topScore <= 0) {
     return "当前文档里没有和这个问题重合的表述。据引不会用文档以外的知识把答案补上。";
+  }
+  if (blockedByCoverage && topScore >= ANSWER_SCORE) {
+    return "字面上有一些重合，但覆盖率不够，不能支撑一个可靠答案。据引不会把文档没写的部分补全。右侧保留了候选片段，方便对照。";
   }
   return "最接近的片段相关度不够，不能支撑一个可靠答案。据引不会把文档没写的部分补全。右侧保留了候选片段，方便你判断是文档没写，还是换个说法就能命中。";
 }
@@ -187,11 +190,14 @@ export function answerQuestion(
   };
 
   if (grounding === "none") {
+    const blockedByCoverage =
+      coverage < MIN_COVERAGE ||
+      (inDoc.missing.length > 0 && coverage < PARTIAL_COVERAGE);
     return {
       ...shared,
       grounding,
       composer: "refusal",
-      text: refusalText(topScore),
+      text: refusalText(topScore, blockedByCoverage),
     };
   }
 
@@ -233,7 +239,7 @@ export function answerQuestion(
       composer: "refusal",
       citations: [],
       missingTerms: [],
-      text: refusalText(topScore),
+      text: refusalText(topScore, false),
     };
   }
 

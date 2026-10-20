@@ -67,13 +67,23 @@ export function ChatPanel({
             {doc.title} · {chunkCount} 段 · {charCount(doc.text)} 字
           </p>
         </div>
-        <div className="engine" role="group" aria-label="回答引擎">
-          <button type="button" className="engine-btn is-on" aria-pressed="true">
-            摘录
+        <div className="chat-tools">
+          <button
+            type="button"
+            className="clear-btn"
+            disabled={pending !== null || messages.length === 0}
+            onClick={onClear}
+          >
+            清空对话
           </button>
-          <button type="button" className="engine-btn" disabled title="演示版故意不接大模型">
-            大模型
-          </button>
+          <div className="engine" role="group" aria-label="回答引擎">
+            <button type="button" className="engine-btn is-on" aria-pressed="true">
+              摘录
+            </button>
+            <button type="button" className="engine-btn" disabled title="演示版故意不接大模型">
+              大模型
+            </button>
+          </div>
         </div>
       </header>
 
@@ -218,9 +228,6 @@ export function ChatPanel({
         <div className="composer-meta">
           <span>Enter 发送 · Shift + Enter 换行</span>
           <span>{count > 140 ? `${count}/200` : "大模型未接入"}</span>
-          <button type="button" className="text-btn" disabled={pending !== null || messages.length === 0} onClick={onClear}>
-            清空对话
-          </button>
         </div>
         {composerError && (
           <p className="alert" role="alert">
